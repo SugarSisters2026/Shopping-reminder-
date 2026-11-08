@@ -1,0 +1,49 @@
+plugins {
+    id 'com.android.application'
+}
+
+def runNumber = System.getenv('GITHUB_RUN_NUMBER')
+
+android {
+    namespace 'ie.nearbylists'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'ie.nearbylists'
+        minSdk 26
+        targetSdk 34
+        versionCode runNumber ? runNumber.toInteger() : 1
+        versionName "1.${runNumber ?: 0}"
+    }
+
+    // A fixed signing key, so a new build installs over the old one and keeps the lists.
+    signingConfigs {
+        release {
+            storeFile file('release.jks')
+            storePassword 'nearbylists'
+            keyAlias 'nearbylists'
+            keyPassword 'nearbylists'
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation 'com.google.android.gms:play-services-location:21.3.0'
+}
